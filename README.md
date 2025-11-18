@@ -59,7 +59,8 @@ This script includes automatic update functionality using Tampermonkey's update 
 
 ```javascript
 // @updateURL    https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js
-// @downloadURL  https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js```
+// @downloadURL  https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js
+```
 
 Updates pushed to the GitHub repository will automatically be distributed to all users.
 
