@@ -60,3 +60,40 @@ This script includes automatic update functionality using Tampermonkey's update 
 ```javascript
 // @updateURL    https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js
 // @downloadURL  https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js```
+
+Updates pushed to the GitHub repository will automatically be distributed to all users.
+
+## 🛠 Compatibility
+|        **Feature**       |   Support Level   |
+|:------------------------:|:-----------------:|
+|       GeoFS Version      |        3.9+       |
+|        File Types        |  `.glb`, `.gltf`  |
+| Real-time Model Tracking |     ✅ Support     |
+|   Aircraft Replacement   |     ✅ Support     |
+|        Animations        |     ❌ Limited     |
+|      Materials / PBR     | ⚠️ Partial Support |
+|       Large Models       | ⚠️ May impact FPS  |
+
+## 📂 Project Structure
+
+### 👨‍💻 Contributors
+GeofsExplorer — Main Developer & Project Creator
+
+31124呀 — UI improvements, testing, Code Improver, Bug Finder
+
+### 🤝 Contributing
+We welcome contributions! Feel free to:
+- Report bugs and issues
+- Suggest new features
+- Submit pull requests
+- Improve documentation
+
+### 📜 License
+This project is released under the MIT License.
+You are free to:
+1. Modify and adapt the code
+2. Distribute the software
+3. Use commercially
+4. Make private use
+
+See the LICENSE file for full details.
