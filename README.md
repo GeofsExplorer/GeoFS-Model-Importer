@@ -98,3 +98,5 @@ You are free to:
 4. Make private use
 
 See the [LICENSE](https://github.com/GeofsExplorer/GeoFS-Model-Importer/blob/main/LICENSE) for full details.
+
+# Enjoy Modeling!
