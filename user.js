@@ -16,7 +16,6 @@
 // @grant        none
 // @updateURL    https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js
 // @downloadURL  https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js
-// @Credit       Credit to https://ChatGPT.com/ for helping me add the Auto Update Link
 // ==/UserScript==
 
 
