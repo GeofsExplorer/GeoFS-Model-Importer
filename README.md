@@ -67,7 +67,7 @@ Updates pushed to the GitHub repository will automatically be distributed to all
 ## 🛠 Compatibility
 |        **Feature**       |   Support Level   |
 |:------------------------:|:-----------------:|
-|       GeoFS Version      |        3.9+       |
+|       GeoFS Version      |       `3.9+`      |
 |        File Types        |  `.glb`, `.gltf`  |
 | Real-time Model Tracking |     ✅ Support     |
 |   Aircraft Replacement   |     ✅ Support     |
