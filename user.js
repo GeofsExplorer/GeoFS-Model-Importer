@@ -7,7 +7,6 @@
 // @description:zh-TW  GeoFS 的 GLTF 模型匯入工具
 // @namespace    https://github.com/GeofsExplorer/GeoFS-Model-Importer
 // @version      1.0.0
-// @description  GLTF Model placer for GeoFS (1:1 scale default, matches aircraft heading)
 // @author       GeofsExplorer and 31124呀
 // @match        https://www.geo-fs.com/geofs.php?v=3.9
 // @match        https://geo-fs.com/geofs.php*
