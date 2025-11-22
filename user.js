@@ -36,7 +36,6 @@
         }
 
         createInterfaceElements() {
-            // Main control button
             const controlButton = document.createElement('div');
             controlButton.style.cssText = `
                 position: fixed;
@@ -58,7 +57,6 @@
             document.body.appendChild(controlButton);
             this.controlButton = controlButton;
 
-            // Control panel
             const controlPanel = document.createElement('div');
             controlPanel.style.cssText = `
                 position: fixed;
@@ -115,16 +113,13 @@
         }
 
         setupEventListeners() {
-            // UI dragging
             this.controlButton.addEventListener("mousedown", (e) => this.startDragging(e));
             document.addEventListener("mouseup", () => this.stopDragging());
             document.addEventListener("mousemove", (e) => this.handleDrag(e));
 
-            // Panel visibility
             this.controlButton.addEventListener('click', (e) => this.togglePanelVisibility(e));
             document.addEventListener('click', (e) => this.handleOutsideClick(e));
 
-            // Scale controls
             const scaleControl = document.getElementById("scale-control");
             const scaleInput = document.getElementById("scale-input");
             const scaleDisplay = document.getElementById("scale-display");
@@ -141,11 +136,9 @@
                 this.updateScaleValue(value);
             });
 
-            // Action buttons
             document.getElementById("place-model-btn").onclick = () => this.place3DModel();
             document.getElementById("use-as-aircraft-btn").onclick = () => this.replaceAircraftModel();
 
-            // Window resize
             window.addEventListener('resize', () => this.adjustPanelPosition());
         }
 
@@ -164,7 +157,6 @@
             document.getElementById("scale-control").value = this.scaleValue;
             document.getElementById("scale-input").value = this.scaleValue;
 
-            // Update scale for all placed models
             this.placedModels.forEach(model => {
                 this.adjustModelScale(model.entity, this.scaleValue);
             });
@@ -385,7 +377,6 @@
         }
     }
 
-    // Initialize the model importer
     new ModelImporter3D();
 
 })();
