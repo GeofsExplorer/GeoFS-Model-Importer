@@ -6,7 +6,7 @@
 // @description:zh-CN  GeoFS 的 GLTF 模型导入工具
 // @description:zh-TW  GeoFS 的 GLTF 模型匯入工具
 // @namespace    https://github.com/GeofsExplorer/GeoFS-Model-Importer
-// @version      1.0.0
+// @version      1.0.1
 // @author       GeofsExplorer and 31124呀
 // @match        https://www.geo-fs.com/geofs.php?v=3.9
 // @match        https://geo-fs.com/geofs.php*
@@ -17,169 +17,213 @@
 // @downloadURL  https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js
 // ==/UserScript==
 
-
 (function() {
     'use strict';
 
-    const toDataUrl = (file) => new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onload = () => res(r.result);
-        r.onerror = rej;
-        r.readAsDataURL(file);
-    });
+    class ModelImporter3D {
+        constructor() {
+            this.scaleValue = 1.0;
+            this.placedModels = [];
+            this.isDraggingUI = false;
+            this.dragOffset = { x: 0, y: 0 };
+            this.init();
+        }
 
-    function setEntityScale(ent, s) {
-        if (!ent) return;
-        try { ent.model.maximumScale = s; } catch(e){}
-    }
+        init() {
+            this.createInterfaceElements();
+            this.setupEventListeners();
+            this.waitForGeoFSReady();
+        }
 
-    const button = document.createElement('div');
-    button.style.cssText = `
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.85);
-        color: #fff;
-        border: 1px solid #333;
-        border-radius: 4px;
-        padding: 8px 12px;
-        z-index: 6000;
-        font-family: Arial, sans-serif;
-        font-size: 13px;
-        cursor: move;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        user-select: none;
-    `;
-    button.innerHTML = 'Model Importer';
-    document.body.appendChild(button);
+        createInterfaceElements() {
+            // Main control button
+            const controlButton = document.createElement('div');
+            controlButton.style.cssText = `
+                position: fixed;
+                bottom: 10px;
+                left: 10px;
+                background: rgba(0,0,0,0.85);
+                color: #fff;
+                border: 1px solid #333;
+                border-radius: 4px;
+                padding: 8px 12px;
+                z-index: 6000;
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                cursor: move;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                user-select: none;
+            `;
+            controlButton.innerHTML = 'Model Importer';
+            document.body.appendChild(controlButton);
+            this.controlButton = controlButton;
 
-    const panel = document.createElement('div');
-    panel.style.cssText = `
-        position: fixed;
-        bottom: 50px;
-        left: 10px;
-        background: rgba(0,0,0,0.9);
-        color: #fff;
-        padding: 0;
-        border-radius: 4px;
-        z-index: 6000;
-        font-family: Arial, sans-serif;
-        font-size: 13px;
-        width: 480px;
-        border: 1px solid #333;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        display: none;
-    `;
+            // Control panel
+            const controlPanel = document.createElement('div');
+            controlPanel.style.cssText = `
+                position: fixed;
+                bottom: 50px;
+                left: 10px;
+                background: rgba(0,0,0,0.9);
+                color: #fff;
+                padding: 0;
+                border-radius: 4px;
+                z-index: 6000;
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                width: 480px;
+                border: 1px solid #333;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+                display: none;
+            `;
 
-    panel.innerHTML = `
-        <div style="padding: 15px; background: rgba(0,0,0,0.8); border-bottom: 1px solid #333; text-align: center;">
-            <img src="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/a9755c58e004a012085cdd9c856b2b88694bcd4e/GeoFS%20Model%20Importer%20Logo%20V1.png"
-                 style="max-width: 100%; height: auto;"
-                 alt="GeoFS Model Importer Logo">
-        </div>
-        <div style="padding: 15px;">
-            <div style="margin-bottom: 15px;">
-                <div style="margin-bottom: 8px; font-size: 12px;">Scale: <span id="scale-value" style="float: right;">1.0</span></div>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <input id="sp-scale" type="range" min="0.1" max="5" step="0.01" value="1.0"
-                           style="flex: 1; height: 4px; background: #555; border-radius: 2px; outline: none;">
-                    <input id="sp-scale-input" type="number" min="0.1" max="5" step="0.01" value="1.0"
-                           style="width: 55px; padding: 4px 6px; border: 1px solid #555; border-radius: 3px; background: #333; color: white; font-size: 11px;">
+            controlPanel.innerHTML = `
+                <div style="padding: 15px; background: rgba(0,0,0,0.8); border-bottom: 1px solid #333; text-align: center;">
+                    <img src="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/a9755c58e004a012085cdd9c856b2b88694bcd4e/GeoFS%20Model%20Importer%20Logo%20V1.png"
+                         style="max-width: 100%; height: auto;"
+                         alt="GeoFS Model Importer Logo">
                 </div>
-            </div>
+                <div style="padding: 15px;">
+                    <div style="margin-bottom: 15px;">
+                        <div style="margin-bottom: 8px; font-size: 12px;">Scale: <span id="scale-display" style="float: right;">1.0</span></div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input id="scale-control" type="range" min="0.1" max="5" step="0.01" value="1.0"
+                                   style="flex: 1; height: 4px; background: #555; border-radius: 2px; outline: none;">
+                            <input id="scale-input" type="number" min="0.1" max="5" step="0.01" value="1.0"
+                                   style="width: 55px; padding: 4px 6px; border: 1px solid #555; border-radius: 3px; background: #333; color: white; font-size: 11px;">
+                        </div>
+                    </div>
 
-            <div style="margin-bottom: 15px;">
-                <div style="margin-bottom: 5px; font-size: 12px;">Select Model:</div>
-                <input id="sp-file" type="file" accept=".gltf,.glb"
-       style="
-            width: 100%;
-            min-width: 100%;
-            max-width: 100%;
-            padding: 8px;
-            height: 32px;
-            border: 1px solid #555;
-            border-radius: 4px;
-            background: #222;
-            color: white;
-            font-size: 12px;
-            box-sizing: border-box;
-            overflow: hidden;
-        ">
+                    <div style="margin-bottom: 15px;">
+                        <div style="margin-bottom: 5px; font-size: 12px;">Select Model:</div>
+                        <input id="model-file-input" type="file" accept=".gltf,.glb"
+                               style="width: 100%; min-width: 100%; max-width: 100%; padding: 8px; height: 32px; border: 1px solid #555; border-radius: 4px; background: #222; color: white; font-size: 12px; box-sizing: border-box; overflow: hidden;">
+                    </div>
 
-            </div>
-
-            <div style="display: flex; gap: 8px;">
-                <button id="sp-place" style="flex: 1; padding: 8px; border: none; border-radius: 3px; background: #2d5aa0; color: white; font-size: 11px; cursor: pointer;">
-                    Place Here
-                </button>
-                <button id="sp-ac" style="flex: 1; padding: 8px; border: none; border-radius: 3px; background: #2d5aa0; color: white; font-size: 11px; cursor: pointer;">
-                    Use as Aircraft
-                </button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(panel);
-
-    const fileInput = document.getElementById("sp-file");
-    const scaleRange = document.getElementById("sp-scale");
-    const scaleInput = document.getElementById("sp-scale-input");
-    const scaleValue = document.getElementById("scale-value");
-    const placed = [];
-
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-
-    button.addEventListener("mousedown", dragStart);
-    document.addEventListener("mouseup", dragEnd);
-    document.addEventListener("mousemove", drag);
-
-    function dragStart(e) {
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
-
-        if (e.target === button) {
-            isDragging = true;
-            button.style.cursor = "grabbing";
+                    <div style="display: flex; gap: 8px;">
+                        <button id="place-model-btn" style="flex: 1; padding: 8px; border: none; border-radius: 3px; background: #2d5aa0; color: white; font-size: 11px; cursor: pointer;">
+                            Place Here
+                        </button>
+                        <button id="use-as-aircraft-btn" style="flex: 1; padding: 8px; border: none; border-radius: 3px; background: #2d5aa0; color: white; font-size: 11px; cursor: pointer;">
+                            Use as Aircraft
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(controlPanel);
+            this.controlPanel = controlPanel;
         }
-    }
 
-    function dragEnd(e) {
-        initialX = currentX;
-        initialY = currentY;
+        setupEventListeners() {
+            // UI dragging
+            this.controlButton.addEventListener("mousedown", (e) => this.startDragging(e));
+            document.addEventListener("mouseup", () => this.stopDragging());
+            document.addEventListener("mousemove", (e) => this.handleDrag(e));
 
-        isDragging = false;
-        button.style.cursor = "move";
+            // Panel visibility
+            this.controlButton.addEventListener('click', (e) => this.togglePanelVisibility(e));
+            document.addEventListener('click', (e) => this.handleOutsideClick(e));
 
-        updatePanelPosition();
-    }
+            // Scale controls
+            const scaleControl = document.getElementById("scale-control");
+            const scaleInput = document.getElementById("scale-input");
+            const scaleDisplay = document.getElementById("scale-display");
 
-    function drag(e) {
-        if (isDragging) {
-            e.preventDefault();
+            scaleControl.addEventListener('input', () => {
+                this.updateScaleValue(scaleControl.value);
+            });
 
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
+            scaleInput.addEventListener('input', () => {
+                let value = parseFloat(scaleInput.value);
+                if (isNaN(value)) value = 1.0;
+                if (value < 0.1) value = 0.1;
+                if (value > 5) value = 5;
+                this.updateScaleValue(value);
+            });
 
-            xOffset = currentX;
-            yOffset = currentY;
+            // Action buttons
+            document.getElementById("place-model-btn").onclick = () => this.place3DModel();
+            document.getElementById("use-as-aircraft-btn").onclick = () => this.replaceAircraftModel();
 
-            setTranslate(currentX, currentY, button);
+            // Window resize
+            window.addEventListener('resize', () => this.adjustPanelPosition());
         }
-    }
 
-    function setTranslate(xPos, yPos, el) {
-        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-    }
+        convertFileToDataURL(fileData) {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                fileReader.onload = () => resolve(fileReader.result);
+                fileReader.onerror = reject;
+                fileReader.readAsDataURL(fileData);
+            });
+        }
 
-    function updatePanelPosition() {
-        if (panel.style.display === 'block') {
-            const buttonRect = button.getBoundingClientRect();
-            const panelRect = panel.getBoundingClientRect();
+        updateScaleValue(newValue) {
+            this.scaleValue = parseFloat(newValue);
+            document.getElementById("scale-display").textContent = this.scaleValue.toFixed(2);
+            document.getElementById("scale-control").value = this.scaleValue;
+            document.getElementById("scale-input").value = this.scaleValue;
+
+            // Update scale for all placed models
+            this.placedModels.forEach(model => {
+                this.adjustModelScale(model.entity, this.scaleValue);
+            });
+        }
+
+        adjustModelScale(modelEntity, scale) {
+            if (!modelEntity || !modelEntity.model) return;
+            try {
+                modelEntity.model.maximumScale = scale;
+            } catch(error) {
+                console.warn('Scale adjustment failed:', error);
+            }
+        }
+
+        startDragging(event) {
+            this.isDraggingUI = true;
+            this.dragOffset.initialX = event.clientX - this.dragOffset.x;
+            this.dragOffset.initialY = event.clientY - this.dragOffset.y;
+            this.controlButton.style.cursor = "grabbing";
+        }
+
+        stopDragging() {
+            this.isDraggingUI = false;
+            this.controlButton.style.cursor = "move";
+            this.adjustPanelPosition();
+        }
+
+        handleDrag(event) {
+            if (!this.isDraggingUI) return;
+
+            event.preventDefault();
+            this.dragOffset.x = event.clientX - this.dragOffset.initialX;
+            this.dragOffset.y = event.clientY - this.dragOffset.initialY;
+
+            this.controlButton.style.transform = `translate3d(${this.dragOffset.x}px, ${this.dragOffset.y}px, 0)`;
+        }
+
+        togglePanelVisibility(event) {
+            if (this.isDraggingUI) return;
+
+            const shouldShow = this.controlPanel.style.display !== "block";
+            this.controlPanel.style.display = shouldShow ? "block" : "none";
+
+            if (shouldShow) {
+                this.adjustPanelPosition();
+            }
+        }
+
+        handleOutsideClick(event) {
+            if (!this.controlPanel.contains(event.target) && event.target !== this.controlButton) {
+                this.controlPanel.style.display = 'none';
+            }
+        }
+
+        adjustPanelPosition() {
+            if (this.controlPanel.style.display !== 'block') return;
+
+            const buttonRect = this.controlButton.getBoundingClientRect();
+            const panelRect = this.controlPanel.getBoundingClientRect();
 
             let panelTop = buttonRect.top - panelRect.height - 10;
             let panelLeft = buttonRect.left;
@@ -192,150 +236,156 @@
                 panelLeft = window.innerWidth - panelRect.width - 10;
             }
 
-            panel.style.top = `${panelTop}px`;
-            panel.style.left = `${panelLeft}px`;
-            panel.style.bottom = 'auto';
+            this.controlPanel.style.top = `${panelTop}px`;
+            this.controlPanel.style.left = `${panelLeft}px`;
+            this.controlPanel.style.bottom = 'auto';
         }
-    }
 
-    button.addEventListener('click', (e) => {
-        if (!isDragging) {
-            const wasVisible = panel.style.display === "block";
-            panel.style.display = wasVisible ? "none" : "block";
+        async place3DModel() {
+            const fileInput = document.getElementById("model-file-input");
+            const selectedFile = fileInput.files[0];
 
-            if (!wasVisible) {
-                updatePanelPosition();
+            if (!selectedFile) {
+                this.showMessage("Please select a GLTF model first");
+                return;
+            }
+
+            if (!this.checkGeoFSReady()) {
+                this.showMessage("Error: GeoFS API not available");
+                return;
+            }
+
+            try {
+                const modelDataURL = await this.convertFileToDataURL(selectedFile);
+                const aircraft = window.geofs.aircraft.instance;
+                const groundPosition = window.geofs.getGroundAltitude(aircraft.llaLocation).location;
+
+                const worldPosition = window.Cesium.Cartesian3.fromDegrees(
+                    groundPosition[1],
+                    groundPosition[0],
+                    groundPosition[2]
+                );
+
+                const modelEntity = window.geofs.api.viewer.entities.add({
+                    position: worldPosition,
+                    orientation: window.Cesium.Transforms.headingPitchRollQuaternion(
+                        worldPosition,
+                        new window.Cesium.HeadingPitchRoll(0, 0, 0)
+                    ),
+                    model: {
+                        uri: modelDataURL,
+                        maximumScale: this.scaleValue
+                    }
+                });
+
+                const modelData = {
+                    entity: modelEntity,
+                    scale: this.scaleValue
+                };
+                this.placedModels.push(modelData);
+
+                this.setupModelTracking(modelData);
+                this.showMessage("Model placed successfully! Congratulations!");
+                this.controlPanel.style.display = 'none';
+            } catch (error) {
+                this.showMessage("Error placing model: " + error.message);
             }
         }
-    });
 
-    document.addEventListener('click', (e) => {
-        if (!panel.contains(e.target) && e.target !== button) {
-            panel.style.display = 'none';
+        async replaceAircraftModel() {
+            const fileInput = document.getElementById("model-file-input");
+            const selectedFile = fileInput.files[0];
+
+            if (!selectedFile) {
+                this.showMessage("Please select a GLTF model first");
+                return;
+            }
+
+            if (!this.checkGeoFSReady()) {
+                this.showMessage("Error: GeoFS API not available yet.");
+                return;
+            }
+
+            try {
+                const modelDataURL = await this.convertFileToDataURL(selectedFile);
+                const aircraft = window.geofs.aircraft.instance;
+
+                const customModel = new window.geofs.api.Model(null, {
+                    url: modelDataURL,
+                    location: aircraft.llaLocation,
+                    rotation: aircraft.htr
+                });
+
+                const updateHandler = () => {
+                    try {
+                        const currentAircraft = window.geofs.aircraft.instance;
+                        customModel.setPositionOrientationAndScale(
+                            currentAircraft.llaLocation,
+                            currentAircraft.htr,
+                            this.scaleValue
+                        );
+                        currentAircraft.setVisibility(0);
+                    } catch(error) {
+                        console.warn('Aircraft model update failed:', error);
+                    }
+                };
+
+                window.geofs.api.viewer.scene.preRender.addEventListener(updateHandler);
+                this.showMessage("Aircraft model replaced!");
+                this.controlPanel.style.display = 'none';
+            } catch (error) {
+                this.showMessage("Error replacing aircraft: " + error.message);
+            }
         }
-    });
 
-    function updateScale(value) {
-        scaleValue.textContent = parseFloat(value).toFixed(2);
-        scaleRange.value = value;
-        scaleInput.value = value;
-    }
-
-    scaleRange.addEventListener('input', () => {
-        updateScale(scaleRange.value);
-    });
-
-    scaleInput.addEventListener('input', () => {
-        let value = parseFloat(scaleInput.value);
-        if (isNaN(value)) value = 1.0;
-        if (value < 0.1) value = 0.1;
-        if (value > 5) value = 5;
-        updateScale(value);
-    });
-
-    async function placeModel(file) {
-        if (!window.geofs || !window.Cesium || !window.geofs.api) {
-            alert("Error: GeoFS API not available");
-            return;
-        }
-
-        try {
-            const data = await toDataUrl(file);
-            const ac = window.geofs.aircraft.instance;
-            const lla = window.geofs.getGroundAltitude(ac.llaLocation).location;
-            const pos = window.Cesium.Cartesian3.fromDegrees(lla[1], lla[0], lla[2]);
-
-            const ent = window.geofs.api.viewer.entities.add({
-                position: pos,
-                orientation: window.Cesium.Transforms.headingPitchRollQuaternion(
-                    pos,
-                    new window.Cesium.HeadingPitchRoll(0, 0, 0)
-                ),
-                model: { uri: data, maximumScale: 1 }
-            });
-
-            const obj = {
-                ent,
-                scale: parseFloat(scaleRange.value)
-            };
-            setEntityScale(ent, obj.scale);
-
-            placed.push(obj);
-
-            window.geofs.api.viewer.scene.preRender.addEventListener(() => {
+        setupModelTracking(modelData) {
+            const updateProcedure = () => {
                 try {
-                    const ac = window.geofs.aircraft.instance;
-                    const lla = ac.llaLocation;
-                    const hpr = ac.htr || ac.hpr || [0,0,0];
+                    const aircraft = window.geofs.aircraft.instance;
+                    const position = aircraft.llaLocation;
+                    const rotation = aircraft.htr || aircraft.hpr || [0, 0, 0];
 
-                    const p = window.Cesium.Cartesian3.fromDegrees(lla[1], lla[0], lla[2]);
-                    obj.ent.position = p;
-                    obj.ent.orientation = window.Cesium.Transforms.headingPitchRollQuaternion(
-                        p,
-                        new window.Cesium.HeadingPitchRoll(hpr[0], hpr[1], hpr[2])
+                    const worldPos = window.Cesium.Cartesian3.fromDegrees(
+                        position[1],
+                        position[0],
+                        position[2]
                     );
-                    setEntityScale(obj.ent, obj.scale);
-                } catch(e){}
-            });
 
-            alert("Model placed successfully! Congratulations!");
-            panel.style.display = 'none';
-        } catch (error) {
-            alert("Error placing model: " + error.message);
+                    modelData.entity.position = worldPos;
+                    modelData.entity.orientation = window.Cesium.Transforms.headingPitchRollQuaternion(
+                        worldPos,
+                        new window.Cesium.HeadingPitchRoll(rotation[0], rotation[1], rotation[2])
+                    );
+                    this.adjustModelScale(modelData.entity, modelData.scale);
+                } catch(error) {
+                    console.warn('Model tracking update failed:', error);
+                }
+            };
+
+            window.geofs.api.viewer.scene.preRender.addEventListener(updateProcedure);
+        }
+
+        checkGeoFSReady() {
+            return window.geofs && window.Cesium && window.geofs.api;
+        }
+
+        showMessage(text) {
+            alert(text);
+        }
+
+        waitForGeoFSReady() {
+            const checkReady = () => {
+                if (this.checkGeoFSReady()) {
+                    this.updateScaleValue(1.0);
+                } else {
+                    setTimeout(checkReady, 1000);
+                }
+            };
+            checkReady();
         }
     }
 
-    async function useAsAircraft(file) {
-        if (!window.geofs || !window.geofs.api) {
-            alert("Error: GeoFS API not available yet.");
-            return;
-        }
-
-        try {
-            const ac = window.geofs.aircraft.instance;
-            const data = await toDataUrl(file);
-
-            const m = new window.geofs.api.Model(null, {
-                url: data,
-                location: ac.llaLocation,
-                rotation: ac.htr
-            });
-
-            window.geofs.api.viewer.scene.preRender.addEventListener(() => {
-                try {
-                    const ac = window.geofs.aircraft.instance;
-                    m.setPositionOrientationAndScale(ac.llaLocation, ac.htr, parseFloat(scaleRange.value));
-                    ac.setVisibility(0);
-                } catch(e){}
-            });
-
-            alert("Aircraft model replaced!");
-            panel.style.display = 'none';
-        } catch (error) {
-            alert("Error replacing aircraft: " + error.message);
-        }
-    }
-
-    document.getElementById("sp-place").onclick = async () => {
-        const f = fileInput.files[0];
-        if (!f) {
-            alert("Please select a GLTF model first");
-            return;
-        }
-        await placeModel(f);
-    };
-
-    document.getElementById("sp-ac").onclick = async () => {
-        const f = fileInput.files[0];
-        if (!f) {
-            alert("Please select a GLTF model first");
-            return;
-        }
-        await useAsAircraft(f);
-    };
-
-    updateScale(1.0);
-
-    window.addEventListener('resize', updatePanelPosition);
+    // Initialize the model importer
+    new ModelImporter3D();
 
 })();
