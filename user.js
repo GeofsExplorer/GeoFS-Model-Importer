@@ -6,7 +6,7 @@
 // @description:zh-CN  GeoFS 的 GLTF 模型导入工具
 // @description:zh-TW  GeoFS 的 GLTF 模型匯入工具
 // @namespace    https://github.com/GeofsExplorer/GeoFS-Model-Importer
-// @version      1.0.1
+// @version      1.0.4
 // @author       GeofsExplorer and 31124呀
 // @match        https://www.geo-fs.com/geofs.php?v=3.9
 // @match        https://geo-fs.com/geofs.php*
@@ -26,6 +26,9 @@
             this.placedModels = [];
             this.isDraggingUI = false;
             this.dragOffset = { x: 0, y: 0 };
+            this.currentAircraftModel = null;
+            this.showCenterOfMass = true;
+            this.aircraftModelUpdateHandler = null;
             this.init();
         }
 
@@ -98,6 +101,13 @@
                                style="width: 100%; min-width: 100%; max-width: 100%; padding: 8px; height: 32px; border: 1px solid #555; border-radius: 4px; background: #222; color: white; font-size: 12px; box-sizing: border-box; overflow: hidden;">
                     </div>
 
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer;">
+                            <input type="checkbox" id="show-center-of-mass" checked>
+                            Show Center of Mass Marker
+                        </label>
+                    </div>
+
                     <div style="display: flex; gap: 8px;">
                         <button id="place-model-btn" style="flex: 1; padding: 8px; border: none; border-radius: 3px; background: #2d5aa0; color: white; font-size: 11px; cursor: pointer;">
                             Place Here
@@ -105,6 +115,12 @@
                         <button id="use-as-aircraft-btn" style="flex: 1; padding: 8px; border: none; border-radius: 3px; background: #2d5aa0; color: white; font-size: 11px; cursor: pointer;">
                             Use as Aircraft
                         </button>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 3px;">
+                        <div style="font-size: 11px; color: #aaa;">
+                            <strong>Note:</strong> Placing a new model or using as aircraft will remove previous ones.
+                        </div>
                     </div>
                 </div>
             `;
@@ -136,6 +152,12 @@
                 this.updateScaleValue(value);
             });
 
+            const centerOfMassCheckbox = document.getElementById("show-center-of-mass");
+            centerOfMassCheckbox.addEventListener('change', (e) => {
+                this.showCenterOfMass = e.target.checked;
+                this.updateAllCenterOfMassMarkers();
+            });
+
             document.getElementById("place-model-btn").onclick = () => this.place3DModel();
             document.getElementById("use-as-aircraft-btn").onclick = () => this.replaceAircraftModel();
 
@@ -160,6 +182,10 @@
             this.placedModels.forEach(model => {
                 this.adjustModelScale(model.entity, this.scaleValue);
             });
+
+            if (this.currentAircraftModel) {
+                this.updateAircraftModelScale();
+            }
         }
 
         adjustModelScale(modelEntity, scale) {
@@ -169,6 +195,93 @@
             } catch(error) {
                 console.warn('Scale adjustment failed:', error);
             }
+        }
+
+        createCenterOfMassMarker(position) {
+            if (!this.showCenterOfMass) return null;
+
+            try {
+                return window.geofs.api.viewer.entities.add({
+                    position: position,
+                    point: {
+                        pixelSize: 8,
+                        color: window.Cesium.Color.RED,
+                        outlineColor: window.Cesium.Color.WHITE,
+                        outlineWidth: 2,
+                        heightReference: window.Cesium.HeightReference.NONE,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY
+                    },
+                    label: {
+                        text: "Center of Mass",
+                        font: "12pt Arial",
+                        pixelOffset: new window.Cesium.Cartesian2(0, -20),
+                        fillColor: window.Cesium.Color.WHITE,
+                        outlineColor: window.Cesium.Color.BLACK,
+                        outlineWidth: 2,
+                        showBackground: true,
+                        backgroundColor: new window.Cesium.Color(0.1, 0.1, 0.1, 0.7),
+                        verticalOrigin: window.Cesium.VerticalOrigin.BOTTOM,
+                        heightReference: window.Cesium.HeightReference.NONE
+                    }
+                });
+            } catch(error) {
+                console.warn('Failed to create center of mass marker:', error);
+                return null;
+            }
+        }
+
+        updateAllCenterOfMassMarkers() {
+            this.placedModels.forEach(model => {
+                if (model.centerOfMassMarker) {
+                    model.centerOfMassMarker.show = this.showCenterOfMass;
+                }
+            });
+        }
+
+        removeAllPlacedModels() {
+            this.placedModels.forEach(model => {
+                try {
+                    window.geofs.api.viewer.entities.remove(model.entity);
+                    if (model.centerOfMassMarker) {
+                        window.geofs.api.viewer.entities.remove(model.centerOfMassMarker);
+                    }
+                } catch(error) {
+                    console.warn('Failed to remove model:', error);
+                }
+            });
+            this.placedModels = [];
+        }
+
+        removeAircraftModel() {
+            if (this.currentAircraftModel) {
+                try {
+                    if (this.aircraftModelUpdateHandler) {
+                        window.geofs.api.viewer.scene.preRender.removeEventListener(this.aircraftModelUpdateHandler);
+                        this.aircraftModelUpdateHandler = null;
+                    }
+
+                    if (window.geofs && window.geofs.aircraft && window.geofs.aircraft.instance) {
+                        window.geofs.aircraft.instance.setVisibility(1);
+                    }
+
+                    try {
+                        if (typeof this.currentAircraftModel.destroy === 'function') {
+                            this.currentAircraftModel.destroy();
+                        }
+                    } catch(e) {
+                        console.warn('Cannot destroy aircraft model, but it will be replaced:', e);
+                    }
+
+                    this.currentAircraftModel = null;
+                } catch(error) {
+                    console.warn('Failed to remove aircraft model:', error);
+                }
+            }
+        }
+
+        removeAllModels() {
+            this.removeAllPlacedModels();
+            this.removeAircraftModel();
         }
 
         startDragging(event) {
@@ -248,6 +361,8 @@
             }
 
             try {
+                this.removeAllModels();
+
                 const modelDataURL = await this.convertFileToDataURL(selectedFile);
                 const aircraft = window.geofs.aircraft.instance;
                 const groundPosition = window.geofs.getGroundAltitude(aircraft.llaLocation).location;
@@ -270,14 +385,16 @@
                     }
                 });
 
+                const centerOfMassMarker = this.createCenterOfMassMarker(worldPosition);
+
                 const modelData = {
                     entity: modelEntity,
+                    centerOfMassMarker: centerOfMassMarker,
                     scale: this.scaleValue
                 };
                 this.placedModels.push(modelData);
 
-                this.setupModelTracking(modelData);
-                this.showMessage("Model placed successfully! Congratulations!");
+                this.showMessage("Model placed successfully! Previous models have been removed.");
                 this.controlPanel.style.display = 'none';
             } catch (error) {
                 this.showMessage("Error placing model: " + error.message);
@@ -299,62 +416,50 @@
             }
 
             try {
+                this.removeAllModels();
+
                 const modelDataURL = await this.convertFileToDataURL(selectedFile);
                 const aircraft = window.geofs.aircraft.instance;
 
-                const customModel = new window.geofs.api.Model(null, {
+                this.currentAircraftModel = new window.geofs.api.Model(null, {
                     url: modelDataURL,
                     location: aircraft.llaLocation,
                     rotation: aircraft.htr
                 });
 
-                const updateHandler = () => {
-                    try {
-                        const currentAircraft = window.geofs.aircraft.instance;
-                        customModel.setPositionOrientationAndScale(
-                            currentAircraft.llaLocation,
-                            currentAircraft.htr,
-                            this.scaleValue
-                        );
-                        currentAircraft.setVisibility(0);
-                    } catch(error) {
-                        console.warn('Aircraft model update failed:', error);
-                    }
-                };
-
-                window.geofs.api.viewer.scene.preRender.addEventListener(updateHandler);
-                this.showMessage("Aircraft model replaced!");
+                this.setupAircraftModelTracking();
+                this.showMessage("Aircraft model replaced! Previous models have been removed.");
                 this.controlPanel.style.display = 'none';
             } catch (error) {
                 this.showMessage("Error replacing aircraft: " + error.message);
             }
         }
 
-        setupModelTracking(modelData) {
-            const updateProcedure = () => {
+        setupAircraftModelTracking() {
+            if (this.aircraftModelUpdateHandler) {
+                window.geofs.api.viewer.scene.preRender.removeEventListener(this.aircraftModelUpdateHandler);
+            }
+
+            this.aircraftModelUpdateHandler = () => {
                 try {
-                    const aircraft = window.geofs.aircraft.instance;
-                    const position = aircraft.llaLocation;
-                    const rotation = aircraft.htr || aircraft.hpr || [0, 0, 0];
-
-                    const worldPos = window.Cesium.Cartesian3.fromDegrees(
-                        position[1],
-                        position[0],
-                        position[2]
-                    );
-
-                    modelData.entity.position = worldPos;
-                    modelData.entity.orientation = window.Cesium.Transforms.headingPitchRollQuaternion(
-                        worldPos,
-                        new window.Cesium.HeadingPitchRoll(rotation[0], rotation[1], rotation[2])
-                    );
-                    this.adjustModelScale(modelData.entity, modelData.scale);
+                    const currentAircraft = window.geofs.aircraft.instance;
+                    if (this.currentAircraftModel) {
+                        this.currentAircraftModel.setPositionOrientationAndScale(
+                            currentAircraft.llaLocation,
+                            currentAircraft.htr,
+                            this.scaleValue
+                        );
+                        currentAircraft.setVisibility(0);
+                    }
                 } catch(error) {
-                    console.warn('Model tracking update failed:', error);
+                    console.warn('Aircraft model update failed:', error);
                 }
             };
 
-            window.geofs.api.viewer.scene.preRender.addEventListener(updateProcedure);
+            window.geofs.api.viewer.scene.preRender.addEventListener(this.aircraftModelUpdateHandler);
+        }
+
+        updateAircraftModelScale() {
         }
 
         checkGeoFSReady() {
