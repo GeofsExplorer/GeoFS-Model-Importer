@@ -6,7 +6,7 @@
 // @description:zh-CN  GeoFS 的 GLTF 模型导入工具
 // @description:zh-TW  GeoFS 的 GLTF 模型匯入工具
 // @namespace    https://github.com/GeofsExplorer/GeoFS-Model-Importer
-// @version      1.0.2
+// @version      1.1.0
 // @author       GeofsExplorer and 31124呀
 // @match        https://www.geo-fs.com/geofs.php?v=3.9
 // @match        https://geo-fs.com/geofs.php*
