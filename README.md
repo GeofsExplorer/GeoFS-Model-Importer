@@ -31,7 +31,7 @@ First, install the Tampermonkey browser extension:
 ### 2. Install the Userscript
 Click the installation link below:
 
-[![Install GeoFS Model Importer](https://img.shields.io/badge/Install-UserScript-blue?style=for-the-badge)](https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js)
+[![Install GeoFS Model Importer](https://img.shields.io/badge/Install-UserScript-blue?style=for-the-badge)](https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js)
 
 ### 3. Launch GeoFS
 Visit the [GeoFS website](https://geo-fs.com/)
