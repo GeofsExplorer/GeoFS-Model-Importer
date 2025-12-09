@@ -9,60 +9,105 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
     
     <link rel="icon" href="PLACE_YOUR_FAVICON_IMAGE_LINK_HERE">
     
     <link rel="stylesheet" href="css/styles.css">
 
     <style>
+        /* High Contrast Dark Mode */
+        :root {
+            --primary-color-high: #48c7ff; /* Lighter Blue for contrast */
+            --secondary-color: #ffffff;
+            --background-color-deep: #0f0f0f; /* Deeper Black for base */
+            --card-background: #1c1c1c; /* Slightly lighter card */
+            --border-color: #3a3a3a;
+            --button-base: #2d5aa0; /* Original Blue for button */
+            --text-info-high: #90d8ff; /* Lighter text-info */
+        }
+        
         body {
-            background-color: #1a1a1a;
-            color: #ffffff;
+            background-color: var(--background-color-deep);
+            color: var(--secondary-color);
             font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
         }
         .navbar {
-            background-color: rgba(34, 34, 34, 0.9) !important;
+            background-color: rgba(15, 15, 15, 0.95) !important; /* Very dark, near-black navbar */
+            border-bottom: 1px solid var(--border-color);
         }
         .navbar-brand img {
             height: 40px;
         }
         .navbar-light .navbar-nav .nav-link {
-            color: #f0f0f0;
+            color: var(--secondary-color);
+            font-weight: 700;
         }
         .navbar-light .navbar-nav .nav-link:hover {
-            color: #2d5aa0;
+            color: var(--primary-color-high); /* Highlight link with high contrast blue */
         }
+        /* Carousel/Hero Styling */
         .carousel-item img {
             width: 100%;
             height: 100vh;
             object-fit: cover;
-            filter: brightness(60%);
+            filter: brightness(50%); /* Deeper contrast for text readability */
         }
         .carousel-caption h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
+            font-size: 3.8rem; /* Slightly larger text */
+            font-weight: 900; /* Extra bold for impact */
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         }
+        /* Section and Card Styling */
         .section-header {
-            color: #2d5aa0;
-            font-weight: 700;
+            color: var(--primary-color-high);
+            font-weight: 900;
             padding-top: 50px;
             padding-bottom: 20px;
         }
         .card {
-            background-color: #282828;
-            border: 1px solid #444;
-            color: #fff;
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            color: var(--secondary-color);
             margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
+        .card-title {
+            color: var(--primary-color-high) !important; /* High contrast title */
+            font-weight: 700;
+        }
+        /* Button Styling */
         .btn-primary-custom {
-            background-color: #2d5aa0;
-            border-color: #2d5aa0;
-            transition: background-color 0.3s;
+            background-color: var(--button-base);
+            border-color: var(--button-base);
+            transition: background-color 0.3s, border-color 0.3s;
+            font-weight: 700;
         }
         .btn-primary-custom:hover {
             background-color: #1f4a86;
             border-color: #1f4a86;
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+        /* List and Link Styling */
+        .text-info {
+            color: var(--text-info-high) !important;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul li {
+            padding-left: 1.5em;
+            text-indent: -1.5em;
+        }
+        ul li::before {
+            content: "•";
+            color: var(--primary-color-high);
+            font-weight: bold;
+            display: inline-block;
+            width: 1.5em;
+            margin-left: -1.5em;
         }
     </style>
 </head>
@@ -136,11 +181,11 @@
         
         <section id="about" class="mb-5">
             <h1 class="text-center section-header">Import Any 3D Model</h1>
-            <p class="text-center lead text-white-50">The GeoFS Model Importer is a powerful UserScript that allows you to easily load and position GLTF (.gltf) and GLB (.glb) models directly into the GeoFS world, giving you complete freedom for custom scenery or aircraft visualization.</p>
+            <p class="text-center lead text-white-50">The GeoFS Model Importer is a powerful **UserScript** that allows you to easily load and position **GLTF (.gltf) and GLB (.glb) models** directly into the GeoFS world, giving you complete freedom for custom scenery or aircraft visualization.</p>
         </section>
 
         <section id="features" class="py-5">
-            <h2 class="text-center section-header">Features</h2>
+            <h2 class="text-center section-header">✨ Key Features</h2>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 
                 <div class="col">
@@ -210,9 +255,9 @@
 
     </div>
 
-    <footer class="text-center py-4 mt-5 bg-dark">
+    <footer class="text-center py-4 mt-5" style="background-color: var(--card-background);">
         <p class="mb-1">Code by GeofsExplorer and 31124呀 | &copy; 2025 GeoFS Model Importer</p>
-        <p class="mb-0"><a href="https://github.com/GeofsExplorer/GeoFS-Model-Importer" target="_blank" class="text-white-50">View on GitHub</a></p>
+        <p class="mb-0"><a href="https://github.com/GeofsExplorer/GeoFS-Model-Importer" target="_blank" class="text-info">View on GitHub</a></p>
     </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
