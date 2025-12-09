@@ -2,192 +2,220 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoFS Model Importer</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" href="PLACE_YOUR_FAVICON_IMAGE_LINK_HERE">
+    
+    <link rel="stylesheet" href="css/styles.css">
+
     <style>
-        :root {
-            --primary-color: #2d5aa0;
-            --secondary-color: #f0f0f0;
-            --background-color: #1a1a1a;
-            --text-color: #ffffff;
-            --card-background: #282828;
-            --border-color: #444;
-        }
-
+        /* Basic Dark Mode Overrides for consistency, assuming styles.css will handle more */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
         }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
+        .navbar {
+            background-color: rgba(34, 34, 34, 0.9) !important; /* Dark Navbar */
         }
-
-        header {
-            background: var(--card-background);
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 2px solid var(--primary-color);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        .navbar-brand img {
+            height: 40px; /* Adjust logo size */
         }
-
-        header h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-size: 2.5em;
-            letter-spacing: 1px;
+        .navbar-light .navbar-nav .nav-link {
+            color: #f0f0f0;
         }
-
-        header p {
-            font-size: 1.1em;
-            color: var(--secondary-color);
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: #2d5aa0;
         }
-
-        .section {
-            padding: 40px 20px;
-            border-radius: 8px;
+        .carousel-item img {
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            object-fit: cover;
+            filter: brightness(60%);
+        }
+        .carousel-caption h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        .section-header {
+            color: #2d5aa0;
+            font-weight: 700;
+            padding-top: 50px;
+            padding-bottom: 20px;
+        }
+        .card {
+            background-color: #282828;
+            border: 1px solid #444;
+            color: #fff;
             margin-bottom: 30px;
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
         }
-
-        h2 {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        ul li {
-            background: #333;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        a.button {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
+        .btn-primary-custom {
+            background-color: #2d5aa0;
+            border-color: #2d5aa0;
             transition: background-color 0.3s;
-            margin-top: 15px;
-            font-size: 1.1em;
         }
-
-        a.button:hover {
+        .btn-primary-custom:hover {
             background-color: #1f4a86;
-        }
-
-        .code-block {
-            background: #3c3c3c;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: Consolas, monospace;
-            font-size: 0.9em;
-            margin: 15px 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.9em;
-            color: #aaa;
-            border-top: 1px solid var(--border-color);
-            margin-top: 40px;
+            border-color: #1f4a86;
         }
     </style>
 </head>
 <body>
-    <header>
+    
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow">
         <div class="container">
-            <h1>🚀 GeoFS Model Importer</h1>
-            <p>A UserScript to seamlessly import and place **GLTF (.gltf, .glb) 3D models** into the GeoFS environment.</p>
-            <a href="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js" class="button">Install Script Now</a>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="section" style="text-align: center;">
+            <a class="navbar-brand" href="index.html">
+                <img src="PLACE_YOUR_LOGO_IMAGE_LINK_HERE" alt="GeoFS Model Importer Logo">
+            </a>
             
-            <p style="margin-top: 15px; font-style: italic; color: #aaa;">Visualize your custom models directly in the GeoFS world.</p>
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#install">Install</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/GeofsExplorer/GeoFS-Model-Importer" target="_blank">GitHub</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <div id="features" class="section">
-            <h2>✨ Features</h2>
-            <ul>
-                <li><strong>Easy Model Placement:</strong> Place GLTF/GLB models as **static objects** on the ground at your current aircraft's location.</li>
-                <li><strong>Aircraft Replacement:</strong> Use your custom model to **replace the active aircraft model**, which tracks its position and orientation (heading, pitch, roll).</li>
-                <li><strong>Dynamic Scaling:</strong> Easily adjust the **scale** (default 1:1) of the imported models using the intuitive UI controls.</li>
-                <li><strong>Center of Mass Marker:</strong> Toggle a visible **Center of Mass (CoM) marker** for placed models to aid in positioning.</li>
-                <li><strong>Clean Slate:</strong> Automatically removes previously imported models when placing a new one.</li>
-            </ul>
+    </nav>
+    
+    <div id="modelImporterCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="4000">
+                <img src="PLACE_YOUR_CAROUSEL_IMAGE_1_LINK_HERE" class="d-block w-100" alt="GeoFS Scenery">
+                <div class="carousel-caption d-flex align-items-center justify-content-center" style="top: 0; bottom: 0;">
+                    <div>
+                        <h1>GEOFS MODEL IMPORTER</h1>
+                        <p class="lead d-none d-md-block">Bring your custom GLTF/GLB models to life in the GeoFS simulation.</p>
+                        <a href="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js" class="btn btn-lg btn-primary-custom mt-3">
+                            🚀 Install Script
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item" data-bs-interval="4000">
+                <img src="PLACE_YOUR_CAROUSEL_IMAGE_2_LINK_HERE" class="d-block w-100" alt="Aircraft Replacement Example">
+                <div class="carousel-caption d-flex align-items-center justify-content-center" style="top: 0; bottom: 0;">
+                    <div>
+                        <h1>CUSTOM AIRCRAFT MODELS</h1>
+                        <p class="lead d-none d-md-block">Replace the default plane with your imported 3D creation.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div id="installation" class="section">
-            <h2>🛠️ Installation Guide</h2>
-
-            <p>The GeoFS Model Importer is a **UserScript**, requiring a browser extension to run.</p>
-
-            <h3>Step 1: Install a UserScript Manager</h3>
-            <p>You must have a browser extension that supports UserScripts. We recommend:</p>
-            <ul>
-                <li>**<a href="https://www.tampermonkey.net/" target="_blank" style="color: #6fbaff;">Tampermonkey</a>** (Chrome, Firefox, Edge, Safari)</li>
-                <li>**<a href="https://violentmonkey.github.io/" target="_blank" style="color: #6fbaff;">Violentmonkey</a>** (Chrome, Firefox, Edge)</li>
-            </ul>
-
-            <h3>Step 2: Install the Script</h3>
-            <ol style="margin-left: 20px;">
-                <li>Click the link below to open the script file.</li>
-                <li>Your UserScript manager will open a new tab asking for confirmation.</li>
-                <li>Click the **"Install"** button.</li>
-            </ol>
-            <a href="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/GeoFS-Model-Importer.user.js" class="button">🔗 Install GeoFS Model Importer</a>
-        </div>
-
-        <div id="how-to-use" class="section">
-            <h2>📝 How to Use</h2>
-
-            <ol style="margin-left: 20px;">
-                <li>**Open GeoFS:** Navigate to the game, and once loaded, click the **"Model Importer"** button at the bottom left to open the control panel.</li>
-                <li>**Set Scale:** Adjust the **Scale slider** or input a value (e.g., 1.0) to set your desired model size.</li>
-                <li>**Select Model:** Click the file input and choose your **GLTF (.gltf) or GLB (.glb)** file.</li>
-                <li>**Action:** Choose one of the following:
-                    <ul>
-                        <li>Click **"Place Here"** to add the model as a static object.</li>
-                        <li>Click **"Use as Aircraft"** to replace your current plane's visual model.</li>
-                    </ul>
-                </li>
-            </ol>
-            <p style="margin-top: 15px;">**Note:** Placing a new model or replacing the aircraft will remove any model previously imported using this tool.</p>
-        </div>
-
-        <div id="credits" class="section">
-            <h2>🧑‍💻 Credits and Contribution</h2>
-            <p><strong>Authors:</strong> GeofsExplorer and 31124呀</p>
-            <p>The code is open-source. Report issues or contribute improvements on GitHub:</p>
-            <p><a href="https://github.com/GeofsExplorer/GeoFS-Model-Importer" target="_blank" style="color: var(--primary-color);">GitHub Repository</a></p>
-        </div>
+        
+        <button class="carousel-control-prev" type="button" data-bs-target="#modelImporterCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#modelImporterCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
 
-    <footer>
-        &copy; 2025 GeoFS Model Importer | Powered by UserScript
+    <div class="container pt-5">
+        
+        <section id="about" class="mb-5">
+            <h1 class="text-center section-header">Import Any 3D Model</h1>
+            <p class="text-center lead text-white-50">The GeoFS Model Importer is a powerful UserScript that allows you to easily load and position GLTF (.gltf) and GLB (.glb) models directly into the GeoFS world, giving you complete freedom for custom scenery or aircraft visualization.</p>
+        </section>
+
+        <section id="features" class="py-5">
+            <h2 class="text-center section-header">✨ Key Features</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                
+                <div class="col">
+                    <div class="card h-100 p-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Static Scenery Placement</h5>
+                            <p class="card-text">Place any model (buildings, vehicles, landmarks) as a **static object** exactly where your aircraft is located, matching the ground elevation and heading.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card h-100 p-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Aircraft Model Replacement</h5>
+                            <p class="card-text">Replace the visual model of your active aircraft. The imported model will dynamically track your plane's **position, heading, pitch, and roll**.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card h-100 p-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Dynamic Scale & CoM Marker</h5>
+                            <p class="card-text">Adjust the model's scale on the fly using the dedicated slider, and optionally visualize the **Center of Mass (CoM)** with a toggleable marker.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="install" class="py-5">
+            <h2 class="text-center section-header">🛠️ Installation Guide</h2>
+
+            <div class="card p-4 mx-auto" style="max-width: 600px;">
+                <p>The GeoFS Model Importer is a **UserScript**, requiring a browser extension manager like Tampermonkey or Violentmonkey to function.</p>
+
+                <h4 class="text-primary mt-3">Step 1: Get a Script Manager</h4>
+                <p>Install one of the following browser extensions:</p>
+                <ul>
+                    <li class="text-white-50"><a href="https://www.tampermonkey.net/" target="_blank" class="text-info">Tampermonkey</a> (Recommended)</li>
+                    <li class="text-white-50"><a href="https://violentmonkey.github.io/" target="_blank" class="text-info">Violentmonkey</a></li>
+                </ul>
+
+                <h4 class="text-primary mt-3">Step 2: Install the Script</h4>
+                <p>Click the button below to install the script directly into your manager:</p>
+                
+                <a href="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js" class="btn btn-lg btn-primary-custom my-3">
+                    🔗 Install GeoFS Model Importer Script
+                </a>
+
+                <p class="small text-white-50"><strong>Current Version:</strong> 1.1.0</p>
+            </div>
+        </section>
+
+        <section id="usage" class="py-5">
+            <h2 class="text-center section-header">📝 How to Use</h2>
+            <div class="card p-4 mx-auto" style="max-width: 700px;">
+                <ol>
+                    <li class="mb-2">**Load GeoFS** and open the floating **"Model Importer"** control panel (bottom left).</li>
+                    <li class="mb-2">Set your desired **Scale** using the input field or slider.</li>
+                    <li class="mb-2">Click **"Select Model"** to choose your GLTF or GLB file.</li>
+                    <li class="mb-2">Click **"Place Here"** for a static object or **"Use as Aircraft"** to replace your plane's visual model.</li>
+                </ol>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="text-center py-4 mt-5 bg-dark">
+        <p class="mb-1">Code by GeofsExplorer and 31124呀 | &copy; 2025 GeoFS Model Importer</p>
+        <p class="mb-0"><a href="https://github.com/GeofsExplorer/GeoFS-Model-Importer" target="_blank" class="text-white-50">View on GitHub</a></p>
     </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 </body>
 </html>
