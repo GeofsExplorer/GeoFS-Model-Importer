@@ -16,15 +16,14 @@
     <link rel="stylesheet" href="css/styles.css">
 
     <style>
-        /* High Contrast Dark Mode */
         :root {
-            --primary-color-high: #48c7ff; /* Lighter Blue for contrast */
+            --primary-color-high: #48c7ff;
             --secondary-color: #ffffff;
-            --background-color-deep: #0f0f0f; /* Deeper Black for base */
-            --card-background: #1c1c1c; /* Slightly lighter card */
+            --background-color-deep: #0f0f0f;
+            --card-background: #1c1c1c;
             --border-color: #3a3a3a;
-            --button-base: #2d5aa0; /* Original Blue for button */
-            --text-info-high: #90d8ff; /* Lighter text-info */
+            --button-base: #2d5aa0;
+            --text-info-high: #90d8ff;
         }
         
         body {
@@ -34,7 +33,7 @@
             font-weight: 300;
         }
         .navbar {
-            background-color: rgba(15, 15, 15, 0.95) !important; /* Very dark, near-black navbar */
+            background-color: rgba(15, 15, 15, 0.95) !important;
             border-bottom: 1px solid var(--border-color);
         }
         .navbar-brand img {
@@ -45,21 +44,19 @@
             font-weight: 700;
         }
         .navbar-light .navbar-nav .nav-link:hover {
-            color: var(--primary-color-high); /* Highlight link with high contrast blue */
+            color: var(--primary-color-high);
         }
-        /* Carousel/Hero Styling */
         .carousel-item img {
             width: 100%;
             height: 100vh;
             object-fit: cover;
-            filter: brightness(50%); /* Deeper contrast for text readability */
+            filter: brightness(50%);
         }
         .carousel-caption h1 {
-            font-size: 3.8rem; /* Slightly larger text */
-            font-weight: 900; /* Extra bold for impact */
+            font-size: 3.8rem;
+            font-weight: 900;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         }
-        /* Section and Card Styling */
         .section-header {
             color: var(--primary-color-high);
             font-weight: 900;
@@ -74,10 +71,9 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         .card-title {
-            color: var(--primary-color-high) !important; /* High contrast title */
+            color: var(--primary-color-high) !important;
             font-weight: 700;
         }
-        /* Button Styling */
         .btn-primary-custom {
             background-color: var(--button-base);
             border-color: var(--button-base);
@@ -87,9 +83,8 @@
         .btn-primary-custom:hover {
             background-color: #1f4a86;
             border-color: #1f4a86;
-            transform: translateY(-2px); /* Slight lift on hover */
+            transform: translateY(-2px);
         }
-        /* List and Link Styling */
         .text-info {
             color: var(--text-info-high) !important;
         }
@@ -151,7 +146,7 @@
                         <h1>GEOFS MODEL IMPORTER</h1>
                         <p class="lead d-none d-md-block">Bring your custom GLTF/GLB models to life in the GeoFS simulation.</p>
                         <a href="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js" class="btn btn-lg btn-primary-custom mt-3">
-                            🚀 Install Script
+                            Install Script
                         </a>
                     </div>
                 </div>
@@ -185,7 +180,7 @@
         </section>
 
         <section id="features" class="py-5">
-            <h2 class="text-center section-header">✨ Key Features</h2>
+            <h2 class="text-center section-header">Features</h2>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 
                 <div class="col">
@@ -221,7 +216,7 @@
             <h2 class="text-center section-header">🛠️ Installation Guide</h2>
 
             <div class="card p-4 mx-auto" style="max-width: 600px;">
-                <p>The GeoFS Model Importer is a **UserScript**, requiring a browser extension manager like Tampermonkey or Violentmonkey to function.</p>
+                <p>GeoFS Model Importer is a UserScript, requiring a browser extension manager like Tampermonkey or Violentmonkey to function.</p>
 
                 <h4 class="text-primary mt-3">Step 1: Get a Script Manager</h4>
                 <p>Install one of the following browser extensions:</p>
@@ -242,7 +237,7 @@
         </section>
 
         <section id="usage" class="py-5">
-            <h2 class="text-center section-header">📝 How to Use</h2>
+            <h2 class="text-center section-header">How to Use</h2>
             <div class="card p-4 mx-auto" style="max-width: 700px;">
                 <ol>
                     <li class="mb-2">**Load GeoFS** and open the floating **"Model Importer"** control panel (bottom left).</li>
