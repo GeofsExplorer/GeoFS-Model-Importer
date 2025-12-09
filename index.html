@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
     
     <link rel="icon" href="PLACE_YOUR_FAVICON_IMAGE_LINK_HERE">
     
@@ -45,6 +45,9 @@
         }
         .navbar-light .navbar-nav .nav-link:hover {
             color: var(--primary-color-high);
+        }
+        .navbar-light .navbar-nav .nav-item .active {
+            color: var(--primary-color-high) !important;
         }
         .carousel-item img {
             width: 100%;
@@ -176,7 +179,7 @@
         
         <section id="about" class="mb-5">
             <h1 class="text-center section-header">Import Any 3D Model</h1>
-            <p class="text-center lead text-white-50">The GeoFS Model Importer is a powerful **UserScript** that allows you to easily load and position **GLTF (.gltf) and GLB (.glb) models** directly into the GeoFS world, giving you complete freedom for custom scenery or aircraft visualization.</p>
+            <p class="text-center lead text-white-50">GeoFS Model Importer is a powerful UserScript that allows you to easily load and position GLTF (.gltf) and GLB (.glb) models directly into the GeoFS world, giving you complete freedom for custom scenery or aircraft visualization.</p>
         </section>
 
         <section id="features" class="py-5">
@@ -213,7 +216,7 @@
         </section>
 
         <section id="install" class="py-5">
-            <h2 class="text-center section-header">🛠️ Installation Guide</h2>
+            <h2 class="text-center section-header">Installation Guide</h2>
 
             <div class="card p-4 mx-auto" style="max-width: 600px;">
                 <p>GeoFS Model Importer is a UserScript, requiring a browser extension manager like Tampermonkey or Violentmonkey to function.</p>
@@ -229,7 +232,7 @@
                 <p>Click the button below to install the script directly into your manager:</p>
                 
                 <a href="https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js" class="btn btn-lg btn-primary-custom my-3">
-                    🔗 Install GeoFS Model Importer Script
+                    Install GeoFS Model Importer Script
                 </a>
 
                 <p class="small text-white-50"><strong>Current Version:</strong> 1.1.0</p>
@@ -240,10 +243,10 @@
             <h2 class="text-center section-header">How to Use</h2>
             <div class="card p-4 mx-auto" style="max-width: 700px;">
                 <ol>
-                    <li class="mb-2">**Load GeoFS** and open the floating **"Model Importer"** control panel (bottom left).</li>
-                    <li class="mb-2">Set your desired **Scale** using the input field or slider.</li>
-                    <li class="mb-2">Click **"Select Model"** to choose your GLTF or GLB file.</li>
-                    <li class="mb-2">Click **"Place Here"** for a static object or **"Use as Aircraft"** to replace your plane's visual model.</li>
+                    <li class="mb-2">Load GeoFS and open the floating "Model Importer" control panel (bottom left).</li>
+                    <li class="mb-2">Set your desired Scale using the input field or slider.</li>
+                    <li class="mb-2">Click "Select Model" to choose your GLTF or GLB file.</li>
+                    <li class="mb-2">Click "Place Here" for a static object or "Use as Aircraft" to replace your plane's visual model.</li>
                 </ol>
             </div>
         </section>
@@ -251,7 +254,7 @@
     </div>
 
     <footer class="text-center py-4 mt-5" style="background-color: var(--card-background);">
-        <p class="mb-1">Code by GeofsExplorer and 31124呀 | &copy; 2025 GeoFS Model Importer</p>
+        <p class="mb-1">Coded by GeofsExplorer and 31124呀 | &copy; 2025 GeoFS Model Importer</p>
         <p class="mb-0"><a href="https://github.com/GeofsExplorer/GeoFS-Model-Importer" target="_blank" class="text-info">View on GitHub</a></p>
     </footer>
     
