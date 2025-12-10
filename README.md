@@ -8,6 +8,10 @@ A powerful GLTF/GLB model importer and aircraft replacer for GeoFS flight simula
 
 This tool is designed for modders, 3D model creators, and GeoFS developers who want enhanced control over 3D models within the flight simulator environment.
 
+## Official Website
+
+[![Official Website](https://img.shields.io/badge/Official-Website-cyan?style=for-the-badge)](https://geofsexplorer.github.io/)
+
 ## Features
 
 - **Import Models**: Load `.gltf` and `.glb` models directly into GeoFS
