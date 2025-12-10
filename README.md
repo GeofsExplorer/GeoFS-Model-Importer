@@ -1,8 +1,24 @@
 # GeoFS Model Importer
 
-A powerful GLTF/GLB model importer and aircraft replacer for GeoFS flight simulator.
+<div align="center" style="line-height: 1;">
+
+<p align="center">
+  <a href="https://github.com/GeoFS-hub/GeoFS-Livery-Materials/stargazers"><img src="https://img.shields.io/github/stars/GeoFS-hub/GeoFS-Livery-Materials.svg?style=for-the-badge" alt="Stargazers"></a>
+  <a href="https://github.com/GeoFS-hub/GeoFS-Livery-Materials/issues"><img src="https://img.shields.io/github/issues/GeoFS-hub/GeoFS-Livery-Materials.svg?style=for-the-badge" alt="Issues"></a>
+  <a href="https://github.com/GeoFS-hub/GeoFS-Livery-Materials/network/members"><img src="https://img.shields.io/github/forks/GeoFS-hub/GeoFS-Livery-Materials.svg?style=for-the-badge" alt="Forks"></a>
+  <a href="https://github.com/GeoFS-hub/GeoFS-Livery-Materials/blob/main/LICENSE"><img src="https://img.shields.io/github/license/GeoFS-hub/GeoFS-Livery-Materials.svg?style=for-the-badge" alt="License"></a>
+</p>
+
+[![WEBSITE](https://img.shields.io/badge/Website-006564?style=for-the-badge&logo=Accenture&logoColor=ffffff&labelColor)](https://www.discord.gg/sKYkgCMtM9/)
+[![GITHUB](https://img.shields.io/badge/GITHUB-24292F?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GeofsExplorer/GeoFS-Model-Importer/)
+[![YOUTUBE](https://img.shields.io/badge/YOUTUBE-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@geofsexplorer/)
+
+
+</div>
 
 ## Overview
+
+A powerful GLTF/GLB model importer and aircraft replacer for GeoFS flight simulator.
 
 **GeoFS Model Importer** is a userscript that enables you to load custom `.gltf` or `.glb` models directly into GeoFS. It supports placing scenery objects and even replacing your aircraft model in real-time.
 
