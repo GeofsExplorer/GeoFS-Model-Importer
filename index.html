@@ -8,7 +8,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700;900&display=swap" rel="stylesheet">
     
     <link rel="icon" href="PLACE_YOUR_FAVICON_IMAGE_LINK_HERE">
@@ -49,6 +49,22 @@
         .navbar-light .navbar-nav .nav-item .active {
             color: var(--primary-color-high) !important;
         }
+        
+        /* --- START: Navigation Link Bullet Removal --- */
+        .navbar-nav {
+            padding-left: 0 !important; 
+        }
+        .navbar-nav li {
+            /* Override custom list styles for navbar links */
+            padding-left: 0 !important; 
+            text-indent: 0 !important; 
+        }
+        .navbar-nav li::before {
+            /* Remove the custom bullet character */
+            content: none !important;
+        }
+        /* --- END: Navigation Link Bullet Removal --- */
+
         .carousel-item img {
             width: 100%;
             height: 100vh;
@@ -91,6 +107,7 @@
         .text-info {
             color: var(--text-info-high) !important;
         }
+        /* General UL styles for sections like 'Install' */
         ul {
             list-style: none;
             padding-left: 0;
