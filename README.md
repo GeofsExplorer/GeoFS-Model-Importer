@@ -10,7 +10,7 @@ This tool is designed for modders, 3D model creators, and GeoFS developers who w
 
 ## Official Website
 
-[![Official Website](https://img.shields.io/badge/Official-Website-cyan?style=for-the-badge)](https://geofsexplorer.github.io/)
+[![Official Website](https://img.shields.io/badge/Official-Website-cyan?style=for-the-badge)](https://geofsexplorer.github.io/GeoFS-Model-Importer/)
 
 ## Features
 
