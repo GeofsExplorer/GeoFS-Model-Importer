@@ -18,7 +18,7 @@
 
 ## Overview
 
-A powerful GLTF/GLB model importer and aircraft replacer for GeoFS flight simulator.
+### A powerful GLTF/GLB model importer and aircraft replacer for GeoFS flight simulator.
 
 **GeoFS Model Importer** is a userscript that enables you to load custom `.gltf` or `.glb` models directly into GeoFS. It supports placing scenery objects and even replacing your aircraft model in real-time.
 
