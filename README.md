@@ -1,23 +1,23 @@
-# 📦 GeoFS Model Importer
+# GeoFS Model Importer
 
 A powerful GLTF/GLB model importer and aircraft replacer for GeoFS flight simulator.
 
-## ✈️ Overview
+## Overview
 
 **GeoFS Model Importer** is a userscript that enables you to load custom `.gltf` or `.glb` models directly into GeoFS. It supports placing scenery objects and even replacing your aircraft model in real-time.
 
 This tool is designed for modders, 3D model creators, and GeoFS developers who want enhanced control over 3D models within the flight simulator environment.
 
-## ⭐ Features
+## Features
 
-- ✅ **Import Models**: Load `.gltf` and `.glb` models directly into GeoFS
-- ✅ **Aircraft Replacement**: Replace your aircraft with custom 3D models
-- ✅ **Real-time Tracking**: Imported models follow aircraft position, heading, and movement
-- ✅ **Precise Scaling**: 1:1 scale default with adjustable slider + numeric input control
-- ✅ **Clean Interface**: Simple, draggable floating button UI
-- ✅ **Auto Updates**: Automatic updates via GitHub integration
-- ✅ **No Dependencies**: Works out-of-the-box with Tampermonkey
-- ✅ **Multi-browser Support**: Compatible with Chrome, Firefox, Edge, and more
+- **Import Models**: Load `.gltf` and `.glb` models directly into GeoFS
+- **Aircraft Replacement**: Replace your aircraft with custom 3D models
+- **Real-time Tracking**: Imported models follow aircraft position, heading, and movement
+- **Precise Scaling**: 1:1 scale default with adjustable slider + numeric input control
+- **Clean Interface**: Simple, draggable floating button UI
+- **Auto Updates**: Automatic updates via GitHub integration
+- **No Dependencies**: Works out-of-the-box with Tampermonkey
+- **Multi-browser Support**: Compatible with Chrome, Firefox, Edge, and more
 
 ## 📥 Installation
 
