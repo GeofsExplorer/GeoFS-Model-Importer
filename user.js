@@ -2,27 +2,31 @@
 // @name         GeoFS Model Importer
 // @name:zh-CN   GeoFS 模型导入器
 // @name:zh-TW   GeoFS 模型匯入器
-// @description  GLTF Model placer for GeoFS (1:1 scale default, matches aircraft heading)
-// @description:zh-CN  GeoFS 的 GLTF 模型导入工具
-// @description:zh-TW  GeoFS 的 GLTF 模型匯入工具
+// @description  GLTF Model placer for GeoFS
+// @description:zh-CN GeoFS 的 GLTF 模型导入工具
+// @description:zh-TW GeoFS 的 GLTF 模型匯入工具
 // @namespace    https://github.com/GeofsExplorer/GeoFS-Model-Importer
-// @version      1.1.0
+// @version      1.2.1
+// @license      MIT
 // @author       GeofsExplorer and 31124呀
 // @match        https://www.geo-fs.com/geofs.php?v=3.9
 // @match        https://geo-fs.com/geofs.php*
 // @match        https://*.geo-fs.com/geofs.php*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=geo-fs.com
 // @grant        none
-// @updateURL    https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js
-// @downloadURL  https://raw.githubusercontent.com/GeofsExplorer/GeoFS-Model-Importer/main/user.js
+// @downloadURL  https://update.greasyfork.org/scripts/558520/GeoFS%20Model%20Importer.user.js
+// @updateURL    https://update.greasyfork.org/scripts/558520/GeoFS%20Model%20Importer.meta.js
 // ==/UserScript==
 
 (function() {
     'use strict';
 
+    const HEADING_MULTIPLIER = 57.602;
+
     class ModelImporter3D {
         constructor() {
             this.scaleValue = 1.0;
+            this.headingValue = 0.0;
             this.placedModels = [];
             this.isDraggingUI = false;
             this.dragOffset = { x: 0, y: 0 };
@@ -76,6 +80,7 @@
                 border: 1px solid #333;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.5);
                 display: none;
+                height: auto;
             `;
 
             controlPanel.innerHTML = `
@@ -90,8 +95,18 @@
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <input id="scale-control" type="range" min="0.1" max="5" step="0.01" value="1.0"
                                    style="flex: 1; height: 4px; background: #555; border-radius: 2px; outline: none;">
-                            <input id="scale-input" type="number" min="0.1" max="5" step="0.01" value="1.0"
-                                   style="width: 55px; padding: 4px 6px; border: 1px solid #555; border-radius: 3px; background: #333; color: white; font-size: 11px;">
+                            <input id="scale-input" type="text" min="0.1" max="5" step="0.01" value="1.0"
+                                   style="width: 55px; padding: 4px 6px; border: 1px solid #555; border-radius: 3px; background: #333; color: white; font-size: 11px; text-align: center;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <div style="margin-bottom: 8px; font-size: 12px;">Heading (Degrees): <span id="heading-display" style="float: right;">0.0°</span></div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input id="heading-control" type="range" min="0" max="360" step="0.1" value="0.0"
+                                   style="flex: 1; height: 4px; background: #555; border-radius: 2px; outline: none;">
+                            <input id="heading-input" type="text" min="0" max="360" step="0.1" value="0.0"
+                                   style="width: 55px; padding: 4px 6px; border: 1px solid #555; border-radius: 3px; background: #333; color: white; font-size: 11px; text-align: center;">
                         </div>
                     </div>
 
@@ -138,18 +153,26 @@
 
             const scaleControl = document.getElementById("scale-control");
             const scaleInput = document.getElementById("scale-input");
-            const scaleDisplay = document.getElementById("scale-display");
-
             scaleControl.addEventListener('input', () => {
-                this.updateScaleValue(scaleControl.value);
+                this.updateScaleValue(scaleControl.value, false);
+            });
+            scaleInput.addEventListener('input', (e) => {
+                this.updateScaleValue(e.target.value, true);
+            });
+            scaleInput.addEventListener('blur', (e) => {
+                this.updateScaleInputDisplay();
             });
 
-            scaleInput.addEventListener('input', () => {
-                let value = parseFloat(scaleInput.value);
-                if (isNaN(value)) value = 1.0;
-                if (value < 0.1) value = 0.1;
-                if (value > 5) value = 5;
-                this.updateScaleValue(value);
+            const headingControl = document.getElementById("heading-control");
+            const headingInput = document.getElementById("heading-input");
+            headingControl.addEventListener('input', () => {
+                this.updateHeadingValue(headingControl.value, false);
+            });
+            headingInput.addEventListener('input', (e) => {
+                this.updateHeadingValue(e.target.value, true);
+            });
+            headingInput.addEventListener('blur', (e) => {
+                this.updateHeadingInputDisplay();
             });
 
             const centerOfMassCheckbox = document.getElementById("show-center-of-mass");
@@ -173,34 +196,80 @@
             });
         }
 
-        updateScaleValue(newValue) {
-            this.scaleValue = parseFloat(newValue);
+        updateScaleInputDisplay() {
+            document.getElementById("scale-input").value = this.scaleValue.toFixed(2);
+        }
+
+        updateScaleValue(newValue, isTextInput) {
+            const originalValue = newValue;
+            let value = parseFloat(newValue);
+
+            if (isTextInput && originalValue === "") {
+                return;
+            }
+            if (isTextInput && isNaN(value)) {
+                return;
+            }
+
+            if (isNaN(value)) value = 1.0;
+            if (value < 0.1) value = 0.1;
+            if (value > 5) value = 5;
+
+            this.scaleValue = value;
             document.getElementById("scale-display").textContent = this.scaleValue.toFixed(2);
             document.getElementById("scale-control").value = this.scaleValue;
-            document.getElementById("scale-input").value = this.scaleValue;
 
-            this.placedModels.forEach(model => {
-                this.adjustModelScale(model.entity, this.scaleValue);
-            });
+            if (!isTextInput) {
+                this.updateScaleInputDisplay();
+            }
+        }
 
-            if (this.currentAircraftModel) {
-                this.updateAircraftModelScale();
+        updateHeadingInputDisplay() {
+            document.getElementById("heading-input").value = this.headingValue.toFixed(1);
+        }
+
+        updateHeadingValue(newValue, isTextInput) {
+            const originalValue = newValue;
+            let value = parseFloat(newValue);
+
+            if (isTextInput && originalValue === "") {
+                return;
+            }
+            if (isTextInput && isNaN(value)) {
+                return;
+            }
+
+            if (isNaN(value)) value = 0.0;
+
+            if (value > 360) {
+                value %= 360;
+            } else if (value < 0) {
+                value = 360 + (value % 360);
+            }
+
+            if (value > 360) value = 360;
+
+            this.headingValue = value;
+            document.getElementById("heading-display").textContent = this.headingValue.toFixed(1) + '°';
+            document.getElementById("heading-control").value = this.headingValue;
+
+            if (!isTextInput) {
+                this.updateHeadingInputDisplay();
             }
         }
 
         adjustModelScale(modelEntity, scale) {
-            if (!modelEntity || !modelEntity.model) return;
-            try {
-                modelEntity.model.maximumScale = scale;
-            } catch(error) {
-                console.warn('Scale adjustment failed:', error);
-            }
+             if (!modelEntity || !modelEntity.model) return;
+             try {
+                 modelEntity.model.maximumScale = scale;
+             } catch(error) {
+                 console.warn('Scale adjustment failed:', error);
+             }
         }
 
         createCenterOfMassMarker(position) {
-            if (!this.showCenterOfMass) return null;
-
             try {
+                if (!this.showCenterOfMass) return null;
                 return window.geofs.api.viewer.entities.add({
                     position: position,
                     point: {
@@ -367,18 +436,22 @@
                 const aircraft = window.geofs.aircraft.instance;
                 const groundPosition = window.geofs.getGroundAltitude(aircraft.llaLocation).location;
 
+                const headingRad = (this.headingValue * (Math.PI / 180)) * HEADING_MULTIPLIER;
+
                 const worldPosition = window.Cesium.Cartesian3.fromDegrees(
                     groundPosition[1],
                     groundPosition[0],
                     groundPosition[2]
                 );
 
+                const orientation = window.Cesium.Transforms.headingPitchRollQuaternion(
+                    worldPosition,
+                    new window.Cesium.HeadingPitchRoll(headingRad, 0, 0)
+                );
+
                 const modelEntity = window.geofs.api.viewer.entities.add({
                     position: worldPosition,
-                    orientation: window.Cesium.Transforms.headingPitchRollQuaternion(
-                        worldPosition,
-                        new window.Cesium.HeadingPitchRoll(0, 0, 0)
-                    ),
+                    orientation: orientation,
                     model: {
                         uri: modelDataURL,
                         maximumScale: this.scaleValue
@@ -444,11 +517,31 @@
                 try {
                     const currentAircraft = window.geofs.aircraft.instance;
                     if (this.currentAircraftModel) {
+
+                        const headingRad = (this.headingValue * (Math.PI / 180)) * HEADING_MULTIPLIER;
+
+                        const htrWithCustomHeading = [
+                            headingRad,
+                            currentAircraft.htr[1],
+                            currentAircraft.htr[2]
+                        ];
+
                         this.currentAircraftModel.setPositionOrientationAndScale(
                             currentAircraft.llaLocation,
-                            currentAircraft.htr,
+                            htrWithCustomHeading,
                             this.scaleValue
                         );
+                        if (this.currentAircraftModel.model) {
+                            const position = this.currentAircraftModel.model.position.getValue(window.geofs.api.viewer.clock.currentTime);
+
+                            const orientation = window.Cesium.Transforms.headingPitchRollQuaternion(
+                                position,
+                                new window.Cesium.HeadingPitchRoll(headingRad, currentAircraft.htr[1], currentAircraft.htr[2])
+                            );
+
+                            this.currentAircraftModel.model.orientation.setValue(orientation);
+                        }
+
                         currentAircraft.setVisibility(0);
                     }
                 } catch(error) {
@@ -473,7 +566,8 @@
         waitForGeoFSReady() {
             const checkReady = () => {
                 if (this.checkGeoFSReady()) {
-                    this.updateScaleValue(1.0);
+                    this.updateScaleValue(1.0, false);
+                    this.updateHeadingValue(0.0, false);
                 } else {
                     setTimeout(checkReady, 1000);
                 }
