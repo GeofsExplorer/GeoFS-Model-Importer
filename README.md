@@ -35,7 +35,7 @@ This tool is designed for modders, 3D model creators, and GeoFS developers who w
 - **No Dependencies**: Works out-of-the-box with Tampermonkey
 - **Multi-browser Support**: Compatible with Chrome, Firefox, Edge, and more
 
-## 📥 Installation
+## Installation
 
 ### 1. Install Tampermonkey
 First, install the Tampermonkey browser extension:
@@ -53,9 +53,9 @@ Click the installation link below:
 Visit the [GeoFS website](https://geo-fs.com/)
 You will see a **Model Importer** button in the bottom-left corner of the screen.
 
-## 🖼 Usage Guide
+## Usage Guide
 
-### 🎯 Import Model ("Place Here")
+### Import Model ("Place Here")
 1. Click the **Model Importer** button
 2. Select a `.glb` or `.gltf` model file
 3. Adjust the scale using the slider or numeric input (optional)
@@ -69,7 +69,7 @@ You will see a **Model Importer** button in the bottom-left corner of the screen
 4. The original aircraft becomes invisible
 5. Your imported model becomes the new visual aircraft representation
 
-## 🔄 Auto Update
+## Auto Update
 
 This script includes automatic update functionality using Tampermonkey's update mechanism:
 
@@ -91,21 +91,21 @@ Updates pushed to the GitHub repository will automatically be distributed to all
 |      Materials / PBR     | ⚠️ Partial Support |
 |       Large Models       | ⚠️ May impact FPS  |
 
-## 📂 Project Structure
+## Project Structure
 
-### 👨‍💻 Contributors
+### Contributors
 GeofsExplorer — Main Developer & Project Creator
 
 31124呀 — UI improvements, testing, Code Improver, Bug Finder
 
-### 🤝 Contributing
+### Contributing
 We welcome contributions! Feel free to:
 - Report bugs and issues
 - Suggest new features
 - Submit pull requests
 - Improve documentation
 
-### 📜 License
+### License
 This project is released under the MIT License.
 You are free to:
 1. Modify and adapt the code
